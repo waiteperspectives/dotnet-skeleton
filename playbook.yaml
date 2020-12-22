@@ -1,0 +1,41 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: remove vim
+      apt:
+        name: vim
+        state: absent
+
+    - name: add jonathans vim
+      apt_repository:
+        repo: ppa:jonathonf/vim
+
+    - name: add packages
+      apt:
+        pkg:
+          - make
+          - zip
+          - unzip
+          - apt-transport-https
+          - vim
+
+    - name: Update server
+      apt:
+        update_cache: yes
+
+    - name: install MS prod package
+      apt:
+        deb: https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
+
+    - name: Update server
+      apt:
+        update_cache: yes
+
+    - name: install dotnet5
+      apt:
+        pkg:
+          - dotnet-sdk-5.0
+          - aspnetcore-runtime-5.0
