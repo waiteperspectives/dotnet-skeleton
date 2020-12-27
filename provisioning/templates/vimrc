@@ -1,0 +1,29 @@
+call plug#begin('~/.vim/plugged')                                                       
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}                                       
+  Plug 'sukima/xmledit', {'branch': 'master'}                                           
+  Plug 'sheerun/vim-polyglot'                                                           
+call plug#end()                                                                         
+                                                                                        
+function! s:check_back_space() abort                                                    
+  let col = col('.') - 1                                                                
+  return !col || getline('.')[col - 1]  =~ '\s'                                         
+endfunction                                                                             
+                                                                                        
+inoremap <silent><expr> <Tab>                                                           
+      \ pumvisible() ? "\<C-n>" :                                                       
+      \ <SID>check_back_space() ? "\<Tab>" :                                            
+      \ coc#refresh()                                                                   
+                                                                                        
+inoremap jk <ESC>
+autocmd VimEnter * inoremap jk <ESC>                                                                           
+set colorcolumn=88                                                                      
+set hlsearch                                                                            
+set nowrap                                                                              
+set nu                                                                                  
+set tabstop=2                                                                           
+set softtabstop=2                                                                       
+set shiftwidth=2                                                                        
+set textwidth=0                                                                         
+set expandtab                                                                           
+set autoindent                                                                          
+set fileformat=unix    

@@ -1,0 +1,97 @@
+# assumes setup_node.yaml has already run
+---
+- hosts: all
+  become: yes
+  become_user: root
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    coc_extensions: coc-json coc-snippets coc-fsharp
+  tasks:
+    - name: remove vim
+      apt:
+        name: vim
+        state: absent
+
+    - name: remove vim plugins
+      file:
+        path: /home/vagrant/.vim
+        state: absent
+
+    - name: remove old coc config
+      file:
+        path: /home/vagrant/.config/coc
+        state: absent
+
+    - name: add jonathans vim
+      apt_repository:
+        repo: ppa:jonathonf/vim
+
+    - name: add packages
+      apt:
+        pkg:
+          - make
+          - zip
+          - unzip
+          - apt-transport-https
+          - vim
+          - python3-pip
+
+    - name: Update server
+      apt:
+        update_cache: yes
+
+    - name: get vim plug
+      shell: curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      become: yes
+      become_user: vagrant
+      args:
+        executable: /bin/bash
+
+    - name: copy vimrc
+      copy:
+        src: ../templates/vimrc
+        dest: "/home/vagrant/.vimrc"
+        owner: "vagrant"
+        group: "vagrant"
+
+    - name: install vim plugins
+      shell: vim +'PlugInstall --sync' +qall &> /dev/null < /dev/tty
+      become: yes
+      become_user: vagrant
+      args:
+        executable: /bin/bash
+
+    - name: make coc extensions folder
+      file:
+        path: /home/vagrant/.config/coc/extensions
+        state: directory
+        mode: '0755'
+        owner: vagrant
+        group: vagrant
+
+    - name: remove package.json
+      file:
+        path: /home/vagrant/.config/coc/extensions/package.json
+        state: absent
+
+    - name: add package.json
+      file:
+        path: /home/vagrant/.config/coc/extensions/package.json
+        state: touch
+        owner: vagrant
+        group: vagrant
+
+    - name: add deps line to package.json
+      lineinfile:
+        path: /home/vagrant/.config/coc/extensions/package.json
+        line: '{ "dependencies": {} }'
+        create: yes
+
+    - name: install coc extensions
+      shell: "source ~/.nvm/nvm.sh && npm install {{ coc_extensions }} --global-style --ignore-scripts --no-bin-links --no-package-lock --only=prod"
+      become: yes
+      become_user: vagrant
+      args:
+        executable: /bin/bash
+        chdir: /home/vagrant/.config/coc/extensions
+

@@ -4,24 +4,6 @@
   become_user: root
 
   tasks:
-    - name: remove vim
-      apt:
-        name: vim
-        state: absent
-
-    - name: add jonathans vim
-      apt_repository:
-        repo: ppa:jonathonf/vim
-
-    - name: add packages
-      apt:
-        pkg:
-          - make
-          - zip
-          - unzip
-          - apt-transport-https
-          - vim
-
     - name: Update server
       apt:
         update_cache: yes
