@@ -1,0 +1,29 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Update server
+      apt:
+        update_cache: yes
+
+    - name: Add packagecloud repo
+      shell: curl -s https://packagecloud.io/install/repositories/EventStore/EventStore-OSS/script.deb.sh | sudo bash
+      args:
+        executable: /bin/bash
+
+    - name: Install eventstore db deb package
+      apt:
+        name: eventstore-oss
+
+    - name: Configure eventstore
+      copy:
+        src: ../templates/eventstore
+        dest: "/etc/eventstore/eventstore.conf"
+
+    - name: Start eventstore service
+      ansible.builtin.service:
+        name: eventstore
+        enabled: yes
+        state: started

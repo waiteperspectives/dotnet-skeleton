@@ -1,0 +1,19 @@
+---
+# Paths
+Db: /var/lib/eventstore
+Index: /var/lib/eventstore/index
+Log: /var/log/eventstore
+
+# Run in insecure mode
+Insecure: true
+
+# Network configuration
+IntIp: 0.0.0.0
+ExtIp: 0.0.0.0
+HttpPort: 2113
+IntTcpPort: 1112
+EnableExternalTcp: false
+EnableAtomPubOverHTTP: true
+
+# Projections configuration
+RunProjections: All
